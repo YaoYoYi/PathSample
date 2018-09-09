@@ -1,35 +1,40 @@
-package com.zhengyi.customview.drawer;
+package com.colorfulegg.pathsample;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Rect;
 import android.graphics.Region;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 
-public class BlockView extends AppCompatImageView {
+/**
+* Author: YaoYoYi
+* Date: Create On 2018/9/9
+ * 区域类点击
+*/
+public class BlockClickView extends AppCompatImageView {
     private Region mRegion;
     private Path mPath;
     private Paint mPaint;
     private int mWidth, mHeight;
-    public BlockView(Context context) {
+    private Region mTmpRegion;
+    public BlockClickView(Context context) {
         this(context, null);
     }
 
-    public BlockView(Context context, @Nullable AttributeSet attrs) {
+    public BlockClickView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
     private void init() {
         mRegion = new Region();
+        mTmpRegion = new Region();
         mPath = new Path();
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
@@ -45,9 +50,8 @@ public class BlockView extends AppCompatImageView {
                 }else {
                     Log.e("event ------------->","不在区域内");
                 }
-                return true;
         }
-        return super.onTouchEvent(event);
+        return true;
     }
 
     @Override
@@ -59,25 +63,14 @@ public class BlockView extends AppCompatImageView {
 
     @Override
     protected void onDraw(Canvas canvas) {
-
-        mPath.moveTo((float) (mHeight /Math.tan(Math.PI/180*60)),0);
+        mPath.moveTo((float) (mHeight / Math.tan(Math.PI/180*60)),0);
         mPath.lineTo(0,mHeight);
-        mPath.lineTo(mWidth - (float) (mHeight /Math.tan(Math.PI/180*60)),mHeight);
+        mPath.lineTo(mWidth - (float) (mHeight / Math.tan(Math.PI/180*60)),mHeight);
         mPath.lineTo(mWidth, 0);
         mPath.close();
-//        mPath.moveTo(0,mHeight);
-//        mPath.lineTo(mWidth - 30,mHeight);
-//        mPath.lineTo(mWidth,0);
-//        mPath.lineTo(30, 0);
-//        mPath.close();
-        mRegion.setPath(mPath, new Region(0,0,mWidth, mHeight));
+        mTmpRegion.set(0,0,mWidth, mHeight);
+        mRegion.setPath(mPath, mTmpRegion);
         canvas.drawPath(mPath,mPaint);
-        Drawable drawable = getDrawable();
-        if (drawable !=null){
-            Rect rect = drawable.getBounds();
-            Log.e("----------------->","left:"+rect.left+", top:"+rect.top+", " +
-                    "right:"+rect.right+", bottom:"+rect.bottom);
-        }
         super.onDraw(canvas);
     }
 }
